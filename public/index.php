@@ -4,44 +4,28 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use TaskFlow\Core\Database;
 use TaskFlow\Core\LoggerFactory;
+use TaskFlow\Observer\EventManager;
+use TaskFlow\Observer\EventType;
+use TaskFlow\Observer\LogObserver;
+use TaskFlow\Observer\NotificationObserver;
 
 $db = Database::getInstance()->getConnection();
 $logger = LoggerFactory::create('file');
 
 $logger->log('TaskFlow API started.');
-echo "TaskFlow API is running!";
+echo "TaskFlow API is running!\n\n";
 
+# observers beispiel
+$event_manager = new EventManager();
+$log_observer = new LogObserver($logger);
+$notification_observer = new NotificationObserver();
 
-# Example usage of DataExporter with JsonExportStrategy
+# Attach
+$event_manager->attach($log_observer);
+$event_manager->attach($notification_observer);
 
-use TaskFlow\Export\DataExporter;
-use TaskFlow\Export\Strategies\CsvExportStrategy;
-use TaskFlow\Export\Strategies\JsonExportStrategy;
-use TaskFlow\Export\Strategies\XmlExportStrategy;
-
-// Beispielnutzung
-$data = [
-  ['id' => 1, 'title' => 'Get the Milk!', 'status' => 'open'],
-  ['id' => 2, 'title' => 'Walk the Dog', 'status' => 'done']
-];
-
-
-$json_exporter = new DataExporter(new JsonExportStrategy());
-$csv_exporter = new DataExporter(new CsvExportStrategy());
-$xml_exporter = new DataExporter(new XmlExportStrategy());
-
-?>
-
-<pre>
-<?php
-echo $csv_exporter->export($data);
-echo "\n";
-echo $json_exporter->export($data);
-echo "\n";
-?>
-</pre>
-<textarea rows="15" cols="80">
-<?php
-echo $xml_exporter->export($data);
-?>
-</textarea>
+# Let's fire an Event! 
+$event_manager->notify(EventType::TASK_CREATED, [
+  'id' => 124532,
+  'status' => 'open'
+]);
