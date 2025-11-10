@@ -9,6 +9,7 @@ use TaskFlow\Observer\EventType;
 use TaskFlow\Observer\LogObserver;
 use TaskFlow\Observer\NotificationObserver;
 use TaskFlow\Command\CommandInvoker;
+use TaskFlow\Command\create_task_command;
 use TaskFlow\Command\CreateTaskCommand;
 use TaskFlow\Command\DeleteTaskCommand;
 
@@ -31,9 +32,14 @@ $event_manager->attach($notification_observer);
 
 $invoker = new CommandInvoker();
 
-$createTaskCommand = new CreateTaskCommand('Walk the Dog!', 'The Dog always needs a walk in the evening. Thats not negotiable. 🐕');
-// $deleteTaskCommand = new DeleteTaskCommand(1); # assuming task with ID 1 exists
+$create_task_command = new CreateTaskCommand(
+  'Walk the Dog!',
+  'The Dog always needs a walk in the evening. Thats not negotiable. 🐕',
+  $event_manager
+);
 
-$invoker->addCommand($createTaskCommand);
-// $invoker->addCommand($deleteTaskCommand);
+$deleteTaskCommand = new DeleteTaskCommand(1); # assuming task with ID 1 exists
+
+$invoker->addCommand($create_task_command);
+$invoker->addCommand($deleteTaskCommand);
 $invoker->run();

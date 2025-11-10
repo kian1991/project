@@ -2,6 +2,8 @@
 
 namespace TaskFlow\Command;
 
+use TaskFlow\Observer\EventManager;
+
 # Command Invoker
 class CommandInvoker {
   private array $commands = [];
@@ -14,5 +16,6 @@ class CommandInvoker {
     foreach ($this->commands as $command) {
       $command->execute();
     }
+    $this->commands = []; // Clear commands after execution
   }
 }
