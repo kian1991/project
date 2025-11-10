@@ -8,6 +8,9 @@ use TaskFlow\Observer\EventManager;
 use TaskFlow\Observer\EventType;
 use TaskFlow\Observer\LogObserver;
 use TaskFlow\Observer\NotificationObserver;
+use TaskFlow\Command\CommandInvoker;
+use TaskFlow\Command\CreateTaskCommand;
+use TaskFlow\Command\DeleteTaskCommand;
 
 $db = Database::getInstance()->getConnection();
 $logger = LoggerFactory::create('file');
@@ -15,7 +18,7 @@ $logger = LoggerFactory::create('file');
 $logger->log('TaskFlow API started.');
 echo "TaskFlow API is running!\n\n";
 
-# observers beispiel
+# observers Beispiel
 $event_manager = new EventManager();
 $log_observer = new LogObserver($logger);
 $notification_observer = new NotificationObserver();
@@ -24,8 +27,13 @@ $notification_observer = new NotificationObserver();
 $event_manager->attach($log_observer);
 $event_manager->attach($notification_observer);
 
-# Let's fire an Event! 
-$event_manager->notify(EventType::TASK_CREATED, [
-  'id' => 124532,
-  'status' => 'open'
-]);
+# Beispielnutzung der Commands
+
+$invoker = new CommandInvoker();
+
+$createTaskCommand = new CreateTaskCommand('Walk the Dog!', 'The Dog always needs a walk in the evening. Thats not negotiable. 🐕');
+// $deleteTaskCommand = new DeleteTaskCommand(1); # assuming task with ID 1 exists
+
+$invoker->addCommand($createTaskCommand);
+// $invoker->addCommand($deleteTaskCommand);
+$invoker->run();
