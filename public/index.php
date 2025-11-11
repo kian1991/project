@@ -2,44 +2,42 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use TaskFlow\Core\Database;
+use TaskFlow\Handler\TaskHandler;
+use TaskFlow\Handler\LoggingDecorator;
+use TaskFlow\Handler\TimingDecorator;
+use TaskFlow\Handler\ErrorHandlingDecorator;
 use TaskFlow\Core\LoggerFactory;
 use TaskFlow\Observer\EventManager;
-use TaskFlow\Observer\EventType;
 use TaskFlow\Observer\LogObserver;
 use TaskFlow\Observer\NotificationObserver;
 use TaskFlow\Command\CommandInvoker;
-use TaskFlow\Command\create_task_command;
-use TaskFlow\Command\CreateTaskCommand;
-use TaskFlow\Command\DeleteTaskCommand;
 
-$db = Database::getInstance()->getConnection();
+// ZENTRALE DEPENDENCIES erstellen (nur EINMAL!)
 $logger = LoggerFactory::create('file');
-
-$logger->log('TaskFlow API started.');
-echo "TaskFlow API is running!\n\n";
-
-# observers Beispiel
-$event_manager = new EventManager();
-$log_observer = new LogObserver($logger);
-$notification_observer = new NotificationObserver();
-
-# Attach
-$event_manager->attach($log_observer);
-$event_manager->attach($notification_observer);
-
-# Beispielnutzung der Commands
-
+$eventManager = new EventManager();
+$eventManager->attach(new LogObserver($logger));
+$eventManager->attach(new NotificationObserver());
 $invoker = new CommandInvoker();
 
-$create_task_command = new CreateTaskCommand(
-  'Walk the Dog!',
-  'The Dog always needs a walk in the evening. Thats not negotiable. 🐕',
-  $event_manager
-);
+// Basis-Handler erstellen
+$handler = new TaskHandler($eventManager, $invoker);
 
-$deleteTaskCommand = new DeleteTaskCommand(1); # assuming task with ID 1 exists
+// Decorator-Stack aufbauen (von innen nach außen!)
+$handler = new LoggingDecorator($handler, $logger);
+$handler = new TimingDecorator($handler, $logger);
+$handler = new ErrorHandlingDecorator($handler);
 
-$invoker->addCommand($create_task_command);
-$invoker->addCommand($deleteTaskCommand);
-$invoker->run();
+// Request bauen
+$request = [
+    'action' => $_GET['action'] ?? 'list',
+    'data' => json_decode(file_get_contents('php://input'), true) ?? $_POST,
+    'method' => $_SERVER['REQUEST_METHOD']
+];
+
+// Request durch den Decorator-Stack schicken
+$response = $handler->handle($request);
+
+// JSON Response ausgeben
+header('Content-Type: application/json');
+http_response_code($response['status'] ?? 200);
+echo json_encode($response, JSON_PRETTY_PRINT);
