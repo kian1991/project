@@ -8,22 +8,22 @@ use TaskFlow\Command\DeleteTaskCommand;
 use TaskFlow\Observer\EventManager;
 use TaskFlow\Core\Database;
 
-class TaskHandler implements Handler
-{
+class TaskHandler implements Handler {
     public function __construct(
         private EventManager $eventManager,
         private CommandInvoker $invoker
-    ) {}
+    ) {
+    }
 
-    public function handle(array $request): array
-    {
+    public function handle(array $request): array {
         $action = $request['action'] ?? 'list';
         $data = $request['data'] ?? [];
 
-        return match($action) {
+        return match ($action) {
             'create' => $this->createTask($data),
             'list' => $this->listTasks(),
             'delete' => $this->deleteTask($data),
+
             default => [
                 'success' => false,
                 'error' => 'Unknown action',
@@ -32,8 +32,7 @@ class TaskHandler implements Handler
         };
     }
 
-    private function createTask(array $data): array
-    {
+    private function createTask(array $data): array {
         // Nutze Command Pattern aus vorherigem Kapitel!
         $command = new CreateTaskCommand(
             $data['title'] ?? '',
@@ -51,25 +50,31 @@ class TaskHandler implements Handler
         ];
     }
 
-    private function listTasks(): array
-    {
-        // TODO: Implementiere diese Methode
-        
+    private function listTasks(): array {
+        $db = Database::getInstance()->getConnection();
+        $stmt = $db->query('SELECT id, title, description, created_at FROM tasks');
+        $tasks = $stmt->fetchAll();
+
         return [
-            'success' => false,
-            'error' => 'Not implemented yet',
-            'status' => 501
+            'success' => true,
+            'data' => $tasks,
+            'status' => 200
         ];
     }
 
-    private function deleteTask(array $data): array
-    {
-        // TODO: Implementiere diese Methode
-        
+    private function deleteTask(array $data): array {
+        $command = new DeleteTaskCommand(
+            $data['id'] ?? 0,
+            $this->eventManager
+        );
+
+        $this->invoker->addCommand($command);
+        $this->invoker->run();
+
         return [
-            'success' => false,
-            'error' => 'Not implemented yet',
-            'status' => 501
+            'success' => true,
+            'message' => 'Task deleted successfully',
+            'status' => 200
         ];
     }
 }

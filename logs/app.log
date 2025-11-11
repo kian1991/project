@@ -1,2 +1,9 @@
-[2025-11-10 12:42:41] TaskFlow API started.
-[2025-11-10 12:42:41] (task_created){"title":"Walk the Dog!"}
+[2025-11-11 20:42:12] Incoming Request: GET list
+[2025-11-11 20:42:12] Request processed in 100.22 ms
+[2025-11-11 20:42:12] Response Status: 200
+[2025-11-11 20:42:28] Incoming Request: GET list
+[2025-11-11 20:42:28] Request processed in 5.51 ms
+[2025-11-11 20:42:28] Response Status: 200
+[2025-11-11 20:42:50] Incoming Request: GET list
+[2025-11-11 20:42:50] Response Status: 200
+[2025-11-11 20:42:50] Request processed in 8.84 ms

@@ -16,7 +16,7 @@ use TaskFlow\Command\CommandInvoker;
 $logger = LoggerFactory::create('file');
 $eventManager = new EventManager();
 $eventManager->attach(new LogObserver($logger));
-$eventManager->attach(new NotificationObserver());
+// $eventManager->attach(new NotificationObserver());
 $invoker = new CommandInvoker();
 
 // Basis-Handler erstellen
