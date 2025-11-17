@@ -2,7 +2,6 @@
 
 namespace TaskFlow\Command;
 
-use TaskFlow\Observer\EventManager;
 
 # Command Invoker
 class CommandInvoker {

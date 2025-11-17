@@ -14,7 +14,7 @@ use TaskFlow\Command\CommandInvoker;
 
 // ZENTRALE DEPENDENCIES erstellen (nur EINMAL!)
 $logger = LoggerFactory::create('file');
-$eventManager = new EventManager();
+$eventManager = EventManager::getInstance();
 $eventManager->attach(new LogObserver($logger));
 // $eventManager->attach(new NotificationObserver());
 $invoker = new CommandInvoker();

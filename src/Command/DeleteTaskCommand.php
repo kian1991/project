@@ -15,8 +15,10 @@ class DeleteTaskCommand implements Command {
     $stmt = $db->prepare("DELETE FROM tasks WHERE id = ?");
     $stmt->execute([$this->taskId]);
 
-    if ($this->eventManager) {
-      $this->eventManager->notify(EventType::TASK_DELETED, [
+    $eventManager = EventManager::getInstance();
+
+    if ($eventManager) {
+      $eventManager->notify(EventType::TASK_DELETED, [
         'taskId' => $this->taskId
       ]);
     }

@@ -7,6 +7,14 @@ use TaskFlow\Observer\Subject;
 
 class EventManager implements Subject {
   private array $observers = [];
+  private static ?EventManager $instance = null;
+
+  public static function getInstance(): EventManager {
+    if (self::$instance === null) {
+      self::$instance = new EventManager();
+    }
+    return self::$instance;
+  }
 
   public function attach(Observer $observer): void {
     $this->observers[] = $observer;

@@ -10,7 +10,6 @@ class CreateTaskCommand implements Command {
   public function __construct(
     private string $title,
     private string $description = '',
-    private ?EventManager $eventManager = null
   ) {
   }
 
@@ -19,9 +18,9 @@ class CreateTaskCommand implements Command {
     $stmt = $db->prepare("INSERT INTO tasks (title, description) VALUES (?, ?)");
     $stmt->execute([$this->title, $this->description]);
 
-
-    if ($this->eventManager) {
-      $this->eventManager->notify(EventType::TASK_CREATED, [
+    $eventManager = EventManager::getInstance();
+    if ($eventManager) {
+      $eventManager->notify(EventType::TASK_CREATED, [
         'title' => $this->title
       ]);
     }

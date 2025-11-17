@@ -7,3 +7,18 @@
 [2025-11-11 20:42:50] Incoming Request: GET list
 [2025-11-11 20:42:50] Response Status: 200
 [2025-11-11 20:42:50] Request processed in 8.84 ms
+[2025-11-12 09:47:34] Incoming Request: GET list
+[2025-11-12 09:47:34] Response Status: 200
+[2025-11-12 09:47:34] Request processed in 97.15 ms
+[2025-11-12 09:48:07] Incoming Request: GET create
+[2025-11-12 09:48:07] (task_created){"title":"Prpare Dinner"}
+[2025-11-12 09:48:07] Response Status: 201
+[2025-11-12 09:48:07] Request processed in 41.54 ms
+[2025-11-12 09:49:26] Incoming Request: GET create
+[2025-11-12 09:49:26] (task_created){"title":"Prepare Dinner"}
+[2025-11-12 09:49:26] Response Status: 201
+[2025-11-12 09:49:26] Request processed in 11.18 ms
+[2025-11-12 09:49:57] Incoming Request: POST create
+[2025-11-12 09:49:57] (task_created){"title":"Prepare Dinner"}
+[2025-11-12 09:49:57] Response Status: 201
+[2025-11-12 09:49:57] Request processed in 12.03 ms
